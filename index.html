@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VOYA — Discover the World</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Distinctive font pairing: Bebas Neue (display) + DM Sans (body) -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Playfair+Display:ital@1&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       PARTICLE CANVAS (animated background)
+  ══════════════════════════════════════════════ -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- ═══════════════════════════════════════════
+       ANIMATED GRADIENT BACKGROUND ORBS
+  ══════════════════════════════════════════════ -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       LOADING OVERLAY
+  ══════════════════════════════════════════════ -->
+  <div id="loading-overlay" class="loading-overlay">
+    <div class="loader-inner">
+      <svg class="plane-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path class="plane-path" d="M10 50 L50 10 L90 50 L70 50 L70 80 L50 70 L30 80 L30 50 Z" fill="none" stroke="currentColor" stroke-width="3"/>
+        <path class="plane-body" d="M20 50 Q50 5 80 50 Q65 50 65 75 L50 65 L35 75 Q35 50 20 50 Z"/>
+      </svg>
+      <div class="loader-dots">
+        <span></span><span></span><span></span>
+      </div>
+      <p class="loader-text">Charting your course…</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       NAVIGATION
+  ══════════════════════════════════════════════ -->
+  <nav class="nav">
+    <div class="nav-logo">
+      <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2"/>
+        <path d="M5 20 Q12 14 20 20 Q28 26 35 20" stroke="currentColor" stroke-width="2" fill="none"/>
+        <path d="M20 5 Q14 12 20 20 Q26 28 20 35" stroke="currentColor" stroke-width="2" fill="none"/>
+        <circle cx="20" cy="20" r="3" fill="currentColor"/>
+      </svg>
+      <span class="logo-text">VOYA</span>
+    </div>
+    <div class="nav-links">
+      <a href="#" class="nav-link active">Explore</a>
+      <a href="#" class="nav-link">Itineraries</a>
+      <a href="#" class="nav-link">Journal</a>
+    </div>
+    <div class="nav-controls">
+      <button class="theme-toggle" id="theme-toggle" title="Toggle light/dark mode" aria-label="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       HERO SECTION
+  ══════════════════════════════════════════════ -->
+  <header class="hero" id="hero">
+    <div class="hero-content">
+      <p class="hero-eyebrow">Your world, mapped.</p>
+      <h1 class="hero-title">
+        <span class="title-line">DISCOVER</span>
+        <span class="title-line italic">extraordinary</span>
+        <span class="title-line">PLACES</span>
+      </h1>
+      <!-- Search Bar -->
+      <div class="search-wrapper">
+        <div class="search-bar" id="search-bar">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <input type="text" id="city-input" placeholder="Search a city — Paris, Tokyo, Cairo…" autocomplete="off" />
+          <button class="search-btn" id="search-btn">
+            <span>Explore</span>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="search-suggestions" id="search-suggestions"></div>
+      </div>
+      <div class="hero-tags">
+        <span class="tag" data-city="Paris">🗼 Paris</span>
+        <span class="tag" data-city="Tokyo">🏯 Tokyo</span>
+        <span class="tag" data-city="New York">🗽 New York</span>
+        <span class="tag" data-city="Bali">🌴 Bali</span>
+        <span class="tag" data-city="Cairo">🏛️ Cairo</span>
+      </div>
+    </div>
+    <!-- Animated airplane flying across hero -->
+    <div class="flying-plane" aria-hidden="true">
+      <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 40 L40 8 L72 40 L52 40 L52 64 L40 56 L28 64 L28 40 Z" fill="currentColor" opacity="0.9"/>
+        <path d="M20 40 L28 48 L28 40 Z" fill="currentColor" opacity="0.5"/>
+        <path d="M60 40 L52 48 L52 40 Z" fill="currentColor" opacity="0.5"/>
+        <line x1="15" y1="40" x2="0" y2="40" stroke="currentColor" stroke-width="1.5" opacity="0.3" stroke-dasharray="4 3"/>
+      </svg>
+    </div>
+    <!-- Animated clouds -->
+    <div class="cloud cloud-1" aria-hidden="true">
+      <svg viewBox="0 0 120 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="60" cy="40" rx="50" ry="18" fill="currentColor" opacity="0.15"/>
+        <ellipse cx="45" cy="32" rx="28" ry="22" fill="currentColor" opacity="0.1"/>
+        <ellipse cx="75" cy="35" rx="22" ry="18" fill="currentColor" opacity="0.12"/>
+      </svg>
+    </div>
+    <div class="cloud cloud-2" aria-hidden="true">
+      <svg viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="50" cy="35" rx="40" ry="14" fill="currentColor" opacity="0.1"/>
+        <ellipse cx="38" cy="28" rx="22" ry="17" fill="currentColor" opacity="0.08"/>
+        <ellipse cx="64" cy="30" rx="20" ry="15" fill="currentColor" opacity="0.1"/>
+      </svg>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════
+       CITY DASHBOARD (revealed after search)
+  ══════════════════════════════════════════════ -->
+  <section class="city-dashboard" id="city-dashboard">
+    <!-- City header banner -->
+    <div class="city-banner" id="city-banner">
+      <div class="city-banner-bg" id="city-banner-bg"></div>
+      <div class="city-banner-content">
+        <div class="city-title-group">
+          <p class="city-country" id="city-country">France</p>
+          <h2 class="city-name" id="city-name">PARIS</h2>
+        </div>
+        <div class="city-meta">
+          <div class="city-time" id="city-time">
+            <span class="time-value" id="time-value">—</span>
+            <span class="time-label">Local Time</span>
+          </div>
+          <div class="city-temp" id="city-temp">
+            <span class="temp-value" id="temp-value">—</span>
+            <span class="temp-label" id="temp-label">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard grid -->
+    <div class="dashboard-grid">
+
+      <!-- Weather Card -->
+      <div class="dash-card weather-card" id="weather-card">
+        <div class="card-header">
+          <span class="card-label">Weather</span>
+          <div class="weather-icon-wrap" id="weather-icon-wrap">
+            <!-- injected dynamically -->
+          </div>
+        </div>
+        <div class="weather-details" id="weather-details">
+          <div class="weather-stat">
+            <span class="stat-val" id="w-humidity">—</span>
+            <span class="stat-lbl">Humidity</span>
+          </div>
+          <div class="weather-stat">
+            <span class="stat-val" id="w-wind">—</span>
+            <span class="stat-lbl">Wind</span>
+          </div>
+          <div class="weather-stat">
+            <span class="stat-val" id="w-feels">—</span>
+            <span class="stat-lbl">Feels Like</span>
+          </div>
+          <div class="weather-stat">
+            <span class="stat-val" id="w-condition">—</span>
+            <span class="stat-lbl">Condition</span>
+          </div>
+        </div>
+        <div class="weather-forecast" id="weather-forecast">
+          <!-- 5-day forecast injected here -->
+        </div>
+      </div>
+
+      <!-- Map Card -->
+      <div class="dash-card map-card" id="map-card">
+        <div class="card-header">
+          <span class="card-label">Location</span>
+          <span class="map-coords" id="map-coords">—</span>
+        </div>
+        <div class="map-frame" id="map-frame">
+          <iframe id="city-map" src="" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="City Map"></iframe>
+          <div class="map-overlay">
+            <svg class="map-pin" viewBox="0 0 24 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 9 12 24 12 24s12-15 12-24C24 5.37 18.63 0 12 0z" fill="var(--accent)"/>
+              <circle cx="12" cy="12" r="5" fill="white"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Attractions Card -->
+      <div class="dash-card attractions-card" id="attractions-card">
+        <div class="card-header">
+          <span class="card-label">Must-See Attractions</span>
+        </div>
+        <ul class="attractions-list" id="attractions-list">
+          <!-- injected -->
+        </ul>
+      </div>
+
+      <!-- Chart Card -->
+      <div class="dash-card chart-card" id="chart-card">
+        <div class="card-header">
+          <span class="card-label">Temperature Trend</span>
+          <div class="chart-toggle">
+            <button class="chart-btn active" data-type="temp">Temp</button>
+            <button class="chart-btn" data-type="rain">Rain</button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="climate-chart" width="400" height="180"></canvas>
+        </div>
+      </div>
+
+      <!-- Fun Facts Card -->
+      <div class="dash-card facts-card" id="facts-card">
+        <div class="card-header">
+          <span class="card-label">City Highlights</span>
+        </div>
+        <div class="facts-grid" id="facts-grid">
+          <!-- injected -->
+        </div>
+      </div>
+
+      <!-- ── NEW: Best Month to Visit ── -->
+      <div class="dash-card bestmonth-card" id="bestmonth-card">
+        <div class="card-header">
+          <span class="card-label">Best Month to Visit</span>
+          <span class="card-sub" id="bestmonth-peak">—</span>
+        </div>
+        <div class="month-bars" id="month-bars">
+          <!-- injected: 12 bars scored by score data -->
+        </div>
+        <div class="month-legend">
+          <span class="legend-dot poor"></span><span>Avoid</span>
+          <span class="legend-dot ok"></span><span>Good</span>
+          <span class="legend-dot great"></span><span>Best</span>
+        </div>
+      </div>
+
+      <!-- ── NEW: Travel Cost Estimator ── -->
+      <div class="dash-card cost-card" id="cost-card">
+        <div class="card-header">
+          <span class="card-label">Daily Budget Estimate</span>
+          <span class="cost-currency" id="cost-currency">USD</span>
+        </div>
+        <div class="cost-tiers" id="cost-tiers">
+          <!-- injected: budget / mid / luxury tiers -->
+        </div>
+        <div class="cost-breakdown" id="cost-breakdown">
+          <!-- injected: hotel, food, transport, activities -->
+        </div>
+      </div>
+
+      <!-- ── NEW: Visa & Entry Requirements ── -->
+      <div class="dash-card visa-card" id="visa-card">
+        <div class="card-header">
+          <span class="card-label">Visa &amp; Entry</span>
+          <span class="visa-badge" id="visa-badge">—</span>
+        </div>
+        <div class="visa-details" id="visa-details">
+          <!-- injected -->
+        </div>
+      </div>
+
+      <!-- ── NEW: Local Phrases ── -->
+      <div class="dash-card phrases-card" id="phrases-card">
+        <div class="card-header">
+          <span class="card-label">Essential Local Phrases</span>
+          <span class="phrases-lang" id="phrases-lang">—</span>
+        </div>
+        <div class="phrases-list" id="phrases-list">
+          <!-- injected -->
+        </div>
+      </div>
+
+      <!-- ── NEW: Jet Lag Calculator ── -->
+      <div class="dash-card jetlag-card" id="jetlag-card">
+        <div class="card-header">
+          <span class="card-label">Jet Lag Calculator</span>
+        </div>
+        <div class="jetlag-body">
+          <div class="jetlag-from">
+            <label class="jetlag-label">Your City / Timezone</label>
+            <input type="text" id="jetlag-home" placeholder="e.g. New York, London…" class="jetlag-input" />
+          </div>
+          <div class="jetlag-result" id="jetlag-result">
+            <div class="jetlag-diff" id="jetlag-diff">—</div>
+            <div class="jetlag-tip" id="jetlag-tip">Enter your home city above</div>
+          </div>
+          <div class="jetlag-tips" id="jetlag-tips"></div>
+        </div>
+      </div>
+
+      <!-- ── NEW: Safety & Vibe Index ── -->
+      <div class="dash-card vibe-card" id="vibe-card">
+        <div class="card-header">
+          <span class="card-label">Safety &amp; Vibe Index</span>
+        </div>
+        <div class="vibe-grid" id="vibe-grid">
+          <!-- injected: safety, nightlife, family, food, culture scores -->
+        </div>
+      </div>
+
+    </div><!-- /dashboard-grid -->
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       TOP DESTINATIONS CAROUSEL
+  ══════════════════════════════════════════════ -->
+  <section class="destinations-section" id="destinations">
+    <div class="section-header">
+      <p class="section-eyebrow">Curated for you</p>
+      <h2 class="section-title">TOP <em>DESTINATIONS</em></h2>
+      <div class="carousel-controls">
+        <button class="carousel-btn" id="prev-btn" aria-label="Previous">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <button class="carousel-btn" id="next-btn" aria-label="Next">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="carousel-track-wrapper">
+      <div class="carousel-track" id="carousel-track">
+        <!-- Destination cards injected by JS -->
+      </div>
+    </div>
+    <div class="carousel-dots" id="carousel-dots"></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <span class="logo-text">VOYA</span>
+        <p>The world is waiting.</p>
+      </div>
+      <p class="footer-note">Built with ♥ for explorers everywhere · Weather data via Open-Meteo · Maps via OpenStreetMap</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
